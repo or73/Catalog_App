@@ -1,0 +1,48 @@
+<!-- templates/login.html -->
+<!-- show the login form-->
+{% extends 'base.html' %}
+{% block content %}
+    <div class='column is-6 is-offset-3'>
+        <h3 class='title'>Login</h3>
+        <div class='box'>
+            {% with messages = get_flashed_messages() %}
+                <div class='notification is-danger'>
+                    {{ messages[0] }}
+                </div> <!-- /.notification -->
+            {% endwith %}
+            <form method='POST' action='/login'>
+                <div class='field'>
+                    <label class='label'>E-mail</label>
+                    <div class='control has-icons-left has-icons-right'>
+                        <input class='input is-large' type='email' name='email' placeholder='email' autofocus=''/>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div> <!-- /.control -->
+                </div> <!-- /.field -->
+
+                <div class='field'>
+                    <label class='label'>Password</label>
+                    <div class='control has-icons-left has-icons-right'>
+                        <input class='input is-large' type='password' name='password' placeholder='Password'>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-key"></i>
+                        </span>
+                    </div> <!-- /.control -->
+                </div> <!-- /.field -->
+
+                <div class='field'>
+                    <label class='checkbox'>
+                        <input type='checkbox' name='remember'/>
+                        Remember me
+                    </label>
+                </div> <!-- /.field -->
+
+                <button class='button is-block is-info is-large is-fullwidth'>Login</button>
+                <div class='field'>
+                    Do not have a user? <a href='{{ url_for("auth_bp.signup") }}'>SignUp</a>
+                </div> <!-- /.field -->
+            </form>
+        </div> <!-- /.box -->
+    </div> <!-- /.column -->
+{% endblock %}

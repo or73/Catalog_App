@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %} - An Error Occurred {% endblock %}
+{% block content %}
+    <h1>Unhandled Error</h1>
+    <p>An unhandled error occurred while processing your request.  This is our fault, and we are looking into it.</p>
+    <p>With very many apologies, we suggest that you return tor our <a href='{{ url_for("catalog_bp.index") }}'>Home Page</a></p>
+    <p>Detailed Error: {{ error }}</p>
+    <p>Exception: {{ exception }}</p>
+{% endblock %}

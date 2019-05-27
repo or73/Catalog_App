@@ -1,0 +1,51 @@
+<!-- templates/category/create_category.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class='column is-6 is-offset-3'>
+        <h3 class='title'>New Category</h3>
+        <div class='box'>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class='notification is-danger'>
+                        {{ messages[0] }}. Go to <a href='{{ url_for("auth_bp.login") }}'>Login Page</a>
+                    </div> <!-- /.notification -->
+                {% endif %}
+            {% endwith %}
+
+            <form method='POST' action='/category/new'>
+                <div class='field'>
+                    <label class='label'>Name</label>
+                    <div class='control has-icons-left has-icons-right'>
+                        <input class='input is-large' type='text' name='name' placeholder='Name' autofocus=''/>
+                        <span class='icon is-small is-left'>
+                            <i class='fas fa-user'></i>
+                        </span>
+                    </div> <!-- /.control -->
+                </div> <!-- /.field -->
+
+                <div class='field'>
+                    <label class='label'>Description</label>
+                    <div class='control has-icons-left has-icons-right'>
+                        <textarea class='textarea' placeholder='Category Description' name='description'></textarea>
+                    </div> <!-- /.control -->
+                </div> <!-- /.field -->
+
+                <div class='field'>
+                    <label class='label'>Items</label>
+                    <small>Select one ore more items to be added to current new Category</small>
+                    {% for item in items %}
+                        <div class='control checkbox_list'>
+                            <label class='checkbox'>
+                                <input type='checkbox' name='item_list' value='{{ item.name }}'/>
+                                {{ item.name }}
+                            </label>
+                        </div> <!-- /.control -->
+                    {% endfor %}
+                </div> <!-- /.field -->
+
+                <button class='button is-block is-info is-large is-fullwidth'>Create Category</button>
+            </form>
+        </div> <!-- /.box -->
+    </div> <!-- /.column -->
+{% endblock %}

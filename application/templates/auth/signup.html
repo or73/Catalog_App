@@ -1,0 +1,228 @@
+<!-- templates/signup.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class='column is-6 is-offset-3'>
+        <h3 class='title'>Sign Up</h3>
+        <div class='box'>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class='notification is-danger'>
+                        {{ messages[0] }}. Go to <a href='{{ url_for("auth_bp.login") }}'>Login Page</a>
+                    </div> <!-- /.notification -->
+                {% endif %}
+            {% endwith %}
+
+            <form method='POST' action=''>
+                <div class='field'>
+                    <label class='label'>E-mail</label>
+                    <div class='control has-icons-left has-icons-right'>
+                        <input class='input is-large' type='email' name='email' placeholder='Email' autofocus=''/>
+                        <span class='icon is-small is-left'>
+                            <i class='fas fa-envelope'></i>
+                        </span>
+                    </div> <!-- /.control -->
+                </div> <!-- /.field -->
+
+                <div class='field'>
+                    <label class='label'>Username</label>
+                    <div class='control has-icons-left has-icons-right'>
+                        <input class='input is-large' type='text' name='username' placeholder='UserName' autofocus=''/>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div> <!-- /.control -->
+                </div> <!-- /.field -->
+
+                <div class='field'>
+                    <label class='label'>Password</label>
+                    <div class='control has-icons-left has-icons-right'>
+                        <input class='input is-large' type='password' name='password' placeholder='Password'>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-key"></i>
+                        </span>
+                    </div> <!-- /.control -->
+                </div> <!-- /.field -->
+
+                <div class='field'>
+                    <label class='label'>First Name</label>
+                    <div class='control has-icons-left has-icons-right'>
+                        <input class='input is-large' type='text' name='first_name' placeholder='First Name'/>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div> <!-- /.control -->
+                </div> <!-- /.field -->
+
+                <div class='field'>
+                    <label class='label'>Last Name</label>
+                    <div class='control has-icons-left has-icons-right'>
+                        <input class='input is-large' type='text' name='last_name' placeholder='Last Name'/>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div> <!-- /.control -->
+                </div> <!-- /.field -->
+
+                <button class='button is-block is-info is-large is-fullwidth'>Sign Up</button>
+                <div class='field'>
+                    Do you have an user? <a href='{{ url_for("auth_bp.login") }}'>Login</a>
+                </div> <!-- /.field -->
+                <br>
+                <div class='row d-flex justify-content-center login_div'>
+                    <button type="button" class='button is-danger is-outlined' id='signInButton_google'>
+                        <span class='icon is-small'>
+                            <i class='fab fa-google'></i>
+                        </span>
+                        <span>SignUp with Google</span>
+                    </button>
+                    <!--<div class='col col-md-3 align-items-center'>-->
+                        <script src='{{ url_for("static", filename="dist/js/includes/jquery.min.js") }}'></script>
+                        <!-- ****************** -------------- GOOGLE SIGN_IN - START -------------- ****************** -->
+                        <script src="https://apis.google.com/js/platform.js?onload=start"></script>
+                        <script>
+                           gapi.load('auth2', function () {
+                               auth2 = gapi.auth2.init({
+                                   client_id: '{{ gmail_client_id }}'
+                               });
+                            });
+                        </script>
+                        <script>
+                            // <!-- GOOGLE SIGN IN -->
+                            $('#signInButton_google').click(function () {
+                                auth2.grantOfflineAccess({'redirect_uri': 'postmessage'}).then(signInCallback);
+                            });
+                            // <!-- GOOGLE SIGN IN -->
+
+                            // <!-- GOOGLE SIGN OUT -->
+                            $('#signOutButton').click(function () {
+                                let auth2 = gapi.auth2.getAuthInstance();
+                                auth2.signOut().then(function () {
+                                    console.log('User signed out.');
+                                });
+                            });
+
+                            function logout() {
+                                let auth2 = gapi.auth2.getAuthInstance();
+                                // Show the sign-in button now that the user is authorized
+                                $('#signInButton').attr('style', 'display: block');
+                                auth2.signOut().then(function () {
+                                    console.log('User signed out.');
+                                });
+                            }
+                            // <!-- END GOOGLE SIGN_OUT -->
+
+                            function signInCallback(json) {
+                                console.log('--------------- inside callback function ---------------');
+                                console.log(json);
+                                // authResult = JSON.parse(json);
+                                let authResult = json;
+                                if (authResult['code']) {
+                                    // Send the one-time-use code to the server, if the server responds,
+                                    //    write a 'login successful' message to the web page and then
+                                    //    redirect back to the main Catalog page
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: '/login/google?state={{ state }}',
+                                        processData: false,
+                                        data: authResult['code'],
+                                        contentType: 'application/octet-stream; charset=utf-8',
+                                        success: function (result) {
+                                            // Handle or verify the server response if necessary.
+                                            if (result) {
+                                                $('#result').html('<div class="alert-success" role="alert"><strong>Login Successful!</strong>   Redirecting...</div>');
+                                                setTimeout(function () {
+                                                    window.location.href = '/'
+                                                }, 2000);
+                                            } else if (authResult['error']) {
+                                                console.log('There was an error: ' + authResult['error']);
+                                            } else {
+                                                $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        </script>
+                    <!-- ****************** -------------- GOOGLE SIGN_IN - END -------------- ****************** -->
+
+                    <!-- ****************** ------------ FACEBOOK SIGN_IN - START ------------ ****************** -->
+                    <script>
+                        // Here we run a very simple test of the Graph API after login is
+                        // successful.  See statusChangeCallback() for when this call is made.
+                        function sendTokenToServer() {
+                            console.log('----------- sendTokenToServer -----------');
+                            console.log('FB: ', FB);
+                            console.log('FB.getAuthResponse():', FB.getAuthResponse());
+                            let access_token = FB.getAuthResponse()['accessToken'];
+
+                            console.log('access_token: ', access_token);
+                            console.log('Welcome!  Fetching your information.... ');
+
+                            FB.api('/me', function (response) {
+                                console.log('Successful login for: ' + response.name);
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/login/facebook?state={{ state }}',
+                                    processData: false,
+                                    data: access_token,
+                                    contentType: 'application/octet-stream; charset=utf-8',
+                                    success: function(result) {
+                                        // Handle or verify the server response if necessary.
+                                        if (result) {
+                                            $('#result').html('<div class="alert-success" role="alert"><strong>Login Successful!</strong>   Redirecting...</div>');
+                                            setTimeout(function() {
+                                                window.location.href = '/'
+                                            }, 2000);
+                                        } else {
+                                            $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                                        }
+                                    }
+                                });
+                            });
+                        }
+
+                        // <!-- FACEBOOK - SIGN_IN -->
+                        window.fbAsyncInit = function() {
+                            console.log('----------- fbAsyncInit *** -----------');
+                            FB.init({
+                                appId   : '{{ facebook_app_id }}',
+                                cookie  : true,  // enable cookies to allow the server to access the session
+                                xfbml   : true,  // parse social plugins on this page
+                                version : 'v2.8' // use version 2.8
+                            });
+                        };
+                        function logout(accessToken) {
+                            FB.logout(function (response) {
+                                console.log('User logout: ', response)
+                            });
+                        }
+
+                        // Load the SDK asynchronously
+                        (function(d, s, id) {
+                            console.log('----------- SDK asynchronously -----------');
+                            let js, fjs = d.getElementsByTagName(s)[0];
+
+                            if (d.getElementById(id)) return;
+
+                            js = d.createElement(s); js.id = id;
+                            js.src = "https://connect.facebook.net/en_US/sdk.js";
+                            fjs.parentNode.insertBefore(js, fjs);
+                        }(document, 'script', 'facebook-jssdk'));
+                        // <!-- END FACEBOOK SIGN IN -->
+                    </script>
+
+                    <a type="button" class='button is-link is-outlined' id='signInButton_facebook'>
+                        <fb:login-button length='long'
+                                         size='large'
+                                         onlogin="javascript:sendTokenToServer();"
+                                         scope="public_profile,email">
+                            <span class='align-self-center'>Login with Facebook</span>
+                        </fb:login-button>
+                    </a>
+                    <!-- ****************** ------------ FACEBOOK SIGN_IN - END ------------ ****************** -->
+                </div> <!-- /.row -->
+            </form>
+        </div> <!-- /.box -->
+    </div> <!-- /.column -->
+{% endblock %}

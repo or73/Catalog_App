@@ -1,0 +1,77 @@
+<!-- templates/index.html -->
+<!-- show the home page -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class='title_subtitle'>
+        <h1 class='title'>{{ title }}</h1>
+        <h2 class='subtitle'>{{ subtitle }}</h2>
+    </div> <!-- /.title_subtitle -->
+
+    <div class='container table_main columns is-mobile'>
+        <div class='column'>
+            <table class='table is-stripped is-narrow is-hoverable'>
+                <thead class='thead_light'>
+                    <tr>
+                        <th class='has-text-light'>Categories</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                        <tr class='table_tr tr_highlight'>
+                            <td>
+                                <a class='has-text-danger class_item_link'
+                                   href='{{ url_for("category_bp.show_category", category_name=category.name) }}'
+                                   title="{{ category.name }}">{{ category.name }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> <!-- /.column -->
+
+        <div class='column is-one-fifth'></div> <!-- /.column -->
+
+        <div class='column'>
+            <table class='table is-stripped is-narrow is-hoverable'>
+                <thead class='thead_light'>
+                    <tr>
+                        <th class='has-text-light'>Items</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item_name, categories in item_categories.items() %}
+                        <tr class='table_tr tr_highlight'>
+                            <td>
+                                <a class='has-text-danger class_item_link'
+                                   href='{{ url_for("item_bp.show_item", item_name=item_name) }}'>
+                                    {{ item_name }}
+                                </a>
+                                ({% for category_name in categories %}
+                                    - <a class='has-text-grey is-size-7 item_category class_item_link'
+                                          href='{{ url_for("category_bp.show_category", category_name=category_name) }}'>
+                                        {{ category_name }}
+                                    </a>
+                                {% endfor %})
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> <!-- /.column -->
+    </div> <!-- /.container -->
+    {% if current_user.is_authenticated %}
+        <div class='container'>
+            <a class='button is-primary is-outlined' href='{{ url_for("category_bp.create") }}'>
+                <span class='icon'><i class='fa fa-plus'></i></span>
+                <span>Add Category</span>
+            </a>
+            <a class='button is-primary is-outlined' href='{{ url_for("item_bp.create") }}'>
+                <span class='icon'><i class='fa fa-plus'></i></span>
+                <span>Add Item</span>
+            </a>
+        </div> <!-- /.container -->
+    {% endif %}
+{% endblock %}

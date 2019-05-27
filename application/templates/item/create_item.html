@@ -1,0 +1,61 @@
+<!-- templates/category/create_category.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class='column is-6 is-offset-3'>
+        <h3 class='title'>New Item</h3>
+        <div class='box'>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class='notification is-danger'>
+                        {{ messages[0] }}. Go to <a href='{{ url_for("auth_bp.login") }}'>Login Page</a>
+                    </div> <!-- /.notification -->
+                {% endif %}
+            {% endwith %}
+
+            <form method='POST' action='/item/new'>
+                <div class='field'>
+                    <label class='label'>Name</label>
+                    <div class='control has-icons-left has-icons-right'>
+                        <input class='input is-large' type='text' name='name' placeholder='Name' autofocus=''/>
+                        <span class='icon is-small is-left'>
+                            <i class='fas fa-user'></i>
+                        </span>
+                    </div> <!-- /.control -->
+                </div> <!-- /.field -->
+
+                <div class='field'>
+                    <label class='label'>Price</label>
+                    <div class='control has-icons-left has-icons-right'>
+                        <input class='input is-large' type='text' name='price' placeholder='Price' autofocus=''/>
+                        <span class='icon is-small is-left'>
+                            <i class='fas fa-dollar-sign'></i>
+                        </span>
+                    </div> <!-- /.control -->
+                </div> <!-- /.field -->
+
+                <div class='field'>
+                    <label class='label'>Description</label>
+                    <div class='control has-icons-left has-icons-right'>
+                        <textarea class='textarea' placeholder='Item Description' name='description'></textarea>
+                    </div> <!-- /.control -->
+                </div> <!-- /.field -->
+
+                <div class='field'>
+                    <label class='label'>Categories</label>
+                    <small>Select one ore more Categories to be correlated with current new Item</small>
+                    {% for category in categories %}
+                        <div class='control checkbox_list'>
+                            <label class='checkbox'>
+                                <input type='checkbox' name='category_list' value='{{ category.name }}'/>
+                                {{ category.name }}
+                            </label>
+                        </div> <!-- /.control -->
+                    {% endfor %}
+                </div> <!-- /.field -->
+
+                <button class='button is-block is-info is-large is-fullwidth'>Create Item</button>
+            </form>
+        </div> <!-- /.box -->
+    </div> <!-- /.column -->
+{% endblock %}

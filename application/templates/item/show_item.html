@@ -1,0 +1,62 @@
+<!-- templates/category/show_category.html -->
+<!-- show the category page -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class='title_subtitle'>
+        <h1 class='title'>{{ title }} - Item</h1>
+        <h2 class='subtitle'>{{ subtitle }}</h2>
+    </div> <!-- /.title_subtitle -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class='notification is-danger'>
+                {{ messages[0] }}. Go to <a href='{{ url_for("auth_bp.login") }}'>Login Page</a>
+            </div> <!-- /.notification -->
+        {% endif %}
+    {% endwith %}
+
+    <div class='container table_main columns is-mobile is-centered'>
+        <table class='table is-narrow table_description'>
+            <thead class='thead_light'>
+                <tr>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th class='has-background-primary'>Name</th>
+                    <td>{{ item.name }}</td>
+                </tr>
+                <tr>
+                    <th class='has-background-primary'>Description</th>
+                    <td>{{ item.description }}</td>
+                </tr>
+                <tr>
+                    <th class='has-background-primary'>Price</th>
+                    <td>$ {{ item.price }}</td>
+                </tr>
+                <tr>
+                    <th class='has-background-primary'>Categories</th>
+                    <td>
+                        {% for category in categories %}
+                            <a class='class_item_link' href='{{ url_for("category_bp.show_category", category_name=category) }}'>- {{ category }}</a>
+                        {% endfor %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div> <!-- /.container -->
+
+    {% if current_user.is_authenticated and current_user.is_owner_item(item.name) %}
+        <div class='container'>
+            <a class='button is-success is-outlined'
+               href='{{ url_for("item_bp.edit", item_name=item.name) }}'>
+                Edit
+            </a><!--'{ url_for("category_bp.delete") }}'>-->
+            <a class='button is-danger is-outlined'
+               href='{{ url_for("item_bp.delete", item_name=item.name) }}'>
+                Delete
+            </a>
+        </div> <!-- /.container -->
+    {% endif %}
+{% endblock %}

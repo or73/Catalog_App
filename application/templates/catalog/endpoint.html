@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class='column is-9 is-offset-1'>
+        <h3 class='title'>{{ title }}</h3>
+        <div class='box'>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class='notification is-danger'>
+                        {{ messages[0] }}. Go to <a href='{{ url_for("auth_bp.login") }}'>Login Page</a>
+                    </div> <!-- /.notification -->
+                {% endif %}
+            {% endwith %}
+
+            <section class='section'>
+                <div class='container'>
+                    <div class='column is-9'>
+                        {% if categories and categories is defined %}
+                            <h2 class='title has-text-black has-text-left'>Categories</h2>
+                            <table class='table'>
+                                <thead><tr><th>Name</th><th>Description</th></tr></thead>
+                                <tbody>
+                                {% for category in categories %}
+                                    <tr><td>{{ category.name }}</td><td>{{ category.description }}</td></tr>
+                                {%  endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+
+                        {% if items and items is defined %}
+                            <h2 class='title has-text-black has-text-left'>Items</h2>
+                            <table class='table'>
+                                <thead><tr><th>Category</th><th>Description</th><th>Price</th></tr></thead>
+                                <tbody>
+                                    {% for item in items %}
+                                        <tr><td>{{ item.name }}</td><td>{{ item.description }}</td><td>{{ item.price }}</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+
+                        {% if catalog_links_categories and catalog_links_categories is defined %}
+                            <h2 class='title has-text-black has-text-left'>Catalog Associations - By Category</h2>
+                            <table class='table'>
+                                <thead><tr><th>Category</th><th>Items</th></tr></thead>
+                                <tbody>
+                                    {% for category, items in catalog_links_categories.items() %}
+                                        <tr>
+                                            <td>{{ category }}</td>
+                                            <td>{% for item in items %} - {{ item }}{% endfor %}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+
+                        {% if catalog_links_items and catalog_links_items is defined %}
+                            <h2 class='title has-text-black has-text-left'>Catalog Associations - By Item</h2>
+                            <table class='table'>
+                                <thead><tr><th>Item</th><th>Categories</th></tr></thead>
+                                <tbody>
+                                    {% for item, categories in catalog_links_categories.items() %}
+                                        <tr>
+                                            <td>{{ item }}</td>
+                                            <td>{% for category in categories %} - {{ category }}{% endfor %}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+
+                        {% if login_logout_sessions and login_logout_sessions is defined %}
+                            <h2 class='title has-text-black has-text-left'>Login/Logout Sessions</h2>
+                            <table class='table'>
+                                <thead><tr><th>User</th><th>Login Time</th><th>Logout Time</th><th>Duration</th></tr></thead>
+                                <tbody>
+                                    {% for username, data in login_logout_sessions.items() %}
+                                        <tr>
+                                            <td>{{ username }}</td>
+                                            <td>{{ data.login }}</td>
+                                            <td>{{ data.logout }}</td>
+                                            <td>{{ data.duration }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div> <!-- /.column -->
+                </div> <!-- /.container -->
+            </section>
+        </div> <!-- /.box -->
+    </div> <!-- /.column -->
+{% endblock %}
